@@ -1,6 +1,23 @@
+
+"use client";
+
 import { EmojiSuggestionForm } from '@/components/emoji-suggestion-form';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
+  const [description, setDescription] = useState("Enter some text and let AI suggest the perfect emoji for you! Supports multiple languages.");
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && navigator.language) {
+      const lang = navigator.language.toLowerCase();
+      if (lang.startsWith('zh')) {
+        setDescription("輸入一些文字，讓 AI 為您建議完美的表情符號！支援多國語言。");
+      } else {
+        setDescription("Enter some text and let AI suggest the perfect emoji for you! Supports multiple languages.");
+      }
+    }
+  }, []);
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-10 lg:p-16 bg-background font-body">
       <div className="w-full max-w-2xl space-y-8">
@@ -9,7 +26,7 @@ export default function Home() {
             Emoji Assist
           </h1>
           <p className="mt-3 text-lg text-muted-foreground sm:mt-4 md:text-xl">
-            輸入一些文字，讓 AI 為您建議完美的表情符號！支援多國語言。
+            {description}
           </p>
         </header>
         <EmojiSuggestionForm />
