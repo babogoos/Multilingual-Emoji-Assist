@@ -9,7 +9,7 @@ export default function Home() {
             Emoji Assist
           </h1>
           <p className="mt-3 text-lg text-muted-foreground sm:mt-4 md:text-xl">
-            Type some text and let AI suggest the perfect emojis for you!
+            輸入一些文字，讓 AI 為您建議完美的表情符號！支援多國語言。
           </p>
         </header>
         <EmojiSuggestionForm />
