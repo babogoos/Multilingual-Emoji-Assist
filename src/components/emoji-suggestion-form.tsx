@@ -20,6 +20,7 @@ import { Loader2, Send } from "lucide-react";
 
 import { suggestEmojis, type SuggestEmojisInput, type SuggestEmojisOutput } from "@/ai/flows/suggest-emojis";
 import { EmojiDisplay } from "./emoji-display";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const MAX_CHARS = 500;
 
@@ -37,7 +38,7 @@ export function EmojiSuggestionForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      text: "",
+      text: "Feeling tired?",
     },
   });
 
@@ -92,7 +93,7 @@ export function EmojiSuggestionForm() {
                   <p id="text-input-description" className="text-sm text-muted-foreground">
                     Describe a feeling, event, or idea, and we'll suggest emojis.
                   </p>
-                  <p id="text-input-char-count" className={`text-sm ${currentCharCount > MAX_CHARS ? 'text-destructive' : 'text-muted-foreground'}`}>
+                  <p id="text-input-char-count" className={`text-sm font-code ${currentCharCount > MAX_CHARS ? 'text-destructive' : 'text-muted-foreground'}`}>
                     {currentCharCount}/{MAX_CHARS}
                   </p>
                 </div>
