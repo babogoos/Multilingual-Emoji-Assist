@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Noto Color Emoji', 'PT Sans', 'sans-serif'],
-        headline: ['Noto Color Emoji', 'PT Sans', 'sans-serif'],
+        body: ['PT Sans', 'Noto Color Emoji', 'sans-serif'],
+        headline: ['PT Sans', 'Noto Color Emoji', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {
