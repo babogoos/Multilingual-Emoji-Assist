@@ -27,6 +27,20 @@ const formSchema = z.object({
   text: z.string().min(1, { message: "Please enter some text." }).max(MAX_CHARS, { message: `Text cannot exceed ${MAX_CHARS} characters.` }),
 });
 
+const catExamples = [
+  { lang: "EN", text: "Cat" },
+  { lang: "中文", text: "貓咪" },
+  { lang: "日本語", text: "猫" },
+  { lang: "한국어", text: "고양이" },
+  { lang: "Bahasa Indonesia", text: "Kucing" },
+  { lang: "Español", text: "Gato" },
+  { lang: "Italiano", text: "Gatto" },
+  { lang: "Français", text: "Chat" },
+  { lang: "Português", text: "Gato" },
+  { lang: "Монгол", text: "Муур" },
+  { lang: "Русский", text: "Кошка" },
+];
+
 export function EmojiSuggestionForm() {
   const [suggestedEmojis, setSuggestedEmojis] = React.useState<string[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -82,6 +96,12 @@ export function EmojiSuggestionForm() {
     }
   };
 
+  const handleExampleClick = async (exampleText: string) => {
+    if (isLoading) return;
+    form.setValue("text", exampleText, { shouldValidate: true });
+    await onSubmit({ text: exampleText });
+  };
+
   return (
     <div className="space-y-6">
       <Form {...form}>
@@ -113,6 +133,29 @@ export function EmojiSuggestionForm() {
               </FormItem>
             )}
           />
+
+          {currentCharCount === 0 && !isLoading && (
+            <div className="pt-1 pb-2 space-y-2">
+              <p className="text-xs text-muted-foreground">
+                Or try an example:
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {catExamples.map((example) => (
+                  <Button
+                    key={example.lang}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full px-3 py-1 h-auto text-xs"
+                    onClick={() => handleExampleClick(example.text)}
+                  >
+                    {example.text}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <Button type="submit" disabled={isLoading} className="w-full py-3 text-lg font-medium">
             {isLoading ? (
               <>
