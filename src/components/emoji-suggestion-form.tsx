@@ -110,7 +110,7 @@ export function EmojiSuggestionForm() {
             control={form.control}
             name="text"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="space-y-2">
                 <FormLabel className="text-lg font-semibold text-foreground">Enter your text</FormLabel>
                 <FormControl>
                   <Textarea
@@ -129,32 +129,32 @@ export function EmojiSuggestionForm() {
                     {currentCharCount}/{MAX_CHARS}
                   </p>
                 </div>
+
+                {currentCharCount === 0 && !isLoading && (
+                  <div className="pb-2 space-y-2">
+                    <p className="text-xs text-muted-foreground">
+                      Or try an example:
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {catExamples.map((example) => (
+                        <Button
+                          key={example.lang}
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="rounded-full px-3 py-1 h-auto text-xs"
+                          onClick={() => handleExampleClick(example.text)}
+                        >
+                          {example.text}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          {currentCharCount === 0 && !isLoading && (
-            <div className="pt-1 pb-2 space-y-2">
-              <p className="text-xs text-muted-foreground">
-                Or try an example:
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {catExamples.map((example) => (
-                  <Button
-                    key={example.lang}
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="rounded-full px-3 py-1 h-auto text-xs"
-                    onClick={() => handleExampleClick(example.text)}
-                  >
-                    {example.text}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          )}
 
           <Button type="submit" disabled={isLoading} className="w-full py-3 text-lg font-medium">
             {isLoading ? (
