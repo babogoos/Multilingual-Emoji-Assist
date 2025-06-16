@@ -14,7 +14,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Send } from "lucide-react";
@@ -22,8 +21,10 @@ import { Loader2, Send } from "lucide-react";
 import { suggestEmojis, type SuggestEmojisInput, type SuggestEmojisOutput } from "@/ai/flows/suggest-emojis";
 import { EmojiDisplay } from "./emoji-display";
 
+const MAX_CHARS = 500;
+
 const formSchema = z.object({
-  text: z.string().min(1, { message: "Please enter some text." }).max(200, { message: "Text cannot exceed 200 characters." }),
+  text: z.string().min(1, { message: "Please enter some text." }).max(MAX_CHARS, { message: `Text cannot exceed ${MAX_CHARS} characters.` }),
 });
 
 export function EmojiSuggestionForm() {
@@ -39,6 +40,9 @@ export function EmojiSuggestionForm() {
       text: "",
     },
   });
+
+  const textValue = form.watch("text");
+  const currentCharCount = textValue?.length || 0;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -81,12 +85,17 @@ export function EmojiSuggestionForm() {
                     placeholder="E.g., Happy birthday! or Let's celebrate..."
                     className="resize-none min-h-[100px] text-base border-input focus:border-primary focus:ring-primary shadow-sm"
                     {...field}
-                    aria-describedby="text-input-description"
+                    aria-describedby="text-input-description text-input-char-count"
                   />
                 </FormControl>
-                <p id="text-input-description" className="text-sm text-muted-foreground">
-                  Describe a feeling, event, or idea, and we'll suggest emojis.
-                </p>
+                <div className="flex justify-between items-center">
+                  <p id="text-input-description" className="text-sm text-muted-foreground">
+                    Describe a feeling, event, or idea, and we'll suggest emojis.
+                  </p>
+                  <p id="text-input-char-count" className={`text-sm ${currentCharCount > MAX_CHARS ? 'text-destructive' : 'text-muted-foreground'}`}>
+                    {currentCharCount}/{MAX_CHARS}
+                  </p>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
