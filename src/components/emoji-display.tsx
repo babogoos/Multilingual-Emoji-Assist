@@ -161,15 +161,16 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
 
   return (
     <Card className="shadow-lg">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row items-start justify-between"> {/* Changed items-center to items-start for better alignment with vertical buttons */}
         <CardTitle className="text-2xl font-headline text-primary">Suggested Emojis</CardTitle>
         {hasSearched && !isLoading && !error && emojis.length > 0 && (
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex flex-col items-end gap-2 ml-auto"> {/* Changed to flex-col and items-end */}
             <Button
               variant="outline"
               size="sm"
               onClick={handleCopyAllEmojis}
               aria-label="Copy all suggested emojis"
+              className="w-full" // Make buttons full width of their container
             >
               <ClipboardList className="mr-2 h-4 w-4" />
               Copy All
@@ -179,6 +180,7 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
               size="sm"
               onClick={handleTestYourFriend}
               aria-label="Test your friend with this text"
+              className="w-full" // Make buttons full width of their container
             >
               <Share2 className="mr-2 h-4 w-4" />
               Test Your Friend
