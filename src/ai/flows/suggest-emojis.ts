@@ -31,7 +31,7 @@ const suggestEmojisPrompt = ai.definePrompt({
   prompt: `You are an expert emoji assistant. Your task is to suggest relevant Unicode emoji characters based on the user's input text.
 
 Analyze the user's text carefully, considering its meaning, sentiment, and overall context.
-The suggested emojis MUST be compatible with Emoji version 15.4.
+The suggested emojis MUST be compatible with Emoji version 15.4 as defined by the Unicode Consortium.
 The output MUST be a list of strings, where each string is a single, valid Unicode emoji character.
 
 Examples of valid output:
@@ -48,7 +48,7 @@ Examples of INVALID output (do NOT do this):
 User's text:
 {{{text}}}
 
-Suggested Unicode Emoji Characters (compatible with Emoji version 15.4):`,
+Suggested Unicode Emoji Characters (compatible with Emoji version 15.4 as defined by the Unicode Consortium):`,
 });
 
 const suggestEmojisFlow = ai.defineFlow(
