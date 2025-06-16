@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-import { AlertCircle, Copy, Info, Loader2 } from "lucide-react";
+import { AlertCircle, Copy, Info, Loader2, ClipboardList } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface EmojiDisplayProps {
@@ -37,6 +37,26 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched }: EmojiDis
         variant: "destructive",
         title: "Copy Failed 😥",
         description: "Could not copy emoji to clipboard.",
+        duration: 3000,
+      });
+    }
+  };
+
+  const handleCopyAllEmojis = async () => {
+    if (emojis.length === 0) return;
+    const allEmojisString = emojis.join(" ");
+    try {
+      await navigator.clipboard.writeText(allEmojisString);
+      toast({
+        title: "All Emojis Copied! 📋",
+        description: `${emojis.length} emojis copied to clipboard.`,
+        duration: 3000,
+      });
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "Copy Failed 😥",
+        description: "Could not copy all emojis to clipboard.",
         duration: 3000,
       });
     }
@@ -104,8 +124,20 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched }: EmojiDis
 
   return (
     <Card className="shadow-lg">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-2xl font-headline text-primary">Suggested Emojis</CardTitle>
+        {hasSearched && !isLoading && !error && emojis.length > 0 && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCopyAllEmojis}
+            aria-label="Copy all suggested emojis"
+            className="ml-auto"
+          >
+            <ClipboardList className="mr-2 h-4 w-4" />
+            Copy All
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="min-h-[200px] flex flex-col justify-center">
         {renderContent()}
