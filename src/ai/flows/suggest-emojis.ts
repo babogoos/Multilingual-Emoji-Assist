@@ -11,7 +11,11 @@ const SuggestEmojisInputSchema = z.object({
 export type SuggestEmojisInput = z.infer<typeof SuggestEmojisInputSchema>;
 
 const SuggestEmojisOutputSchema = z.object({
-  emojis: z.array(z.string()).describe('The list of emojis suggested for the text.'),
+  emojis: z
+    .array(z.string())
+    .describe(
+      'A list of Unicode emoji characters. Each string in the array must be a single, valid Unicode emoji. For example: ["😀", "🎉", "👍"]. Do NOT return CLDR short names like ":grinning_face:" or any other text.'
+    ),
 });
 
 export type SuggestEmojisOutput = z.infer<typeof SuggestEmojisOutputSchema>;
@@ -24,9 +28,27 @@ const suggestEmojisPrompt = ai.definePrompt({
   name: 'suggestEmojisPrompt',
   input: {schema: SuggestEmojisInputSchema},
   output: {schema: SuggestEmojisOutputSchema},
-  prompt: `You are an emoji expert. Given the following text, suggest a list of relevant emojis.
-Text: {{{text}}}
-Emojis:`, // Keep newlines.
+  prompt: `You are an expert emoji assistant. Your task is to suggest relevant Unicode emoji characters based on the user's input text.
+
+Analyze the user's text carefully, considering its meaning, sentiment, and overall context.
+The suggested emojis MUST be compatible with Emoji version 15.4.
+The output MUST be a list of strings, where each string is a single, valid Unicode emoji character.
+
+Examples of valid output:
+- For "Happy birthday!", you might suggest: ["🎂", "🎉", "🥳", "🎁"]
+- For "Feeling sad", you might suggest: ["😢", "😭", "😔"]
+- For "Let's celebrate the new project launch!", you might suggest: ["🚀", "🎉", "🎊", "🍾"]
+
+Examples of INVALID output (do NOT do this):
+- ["grinning_face", "party_popper"]
+- [":smile:", ":tada:"]
+- ["smile emoji", "celebration emoji"]
+- "🎂🎉🥳🎁" (single string with multiple emojis)
+
+User's text:
+{{{text}}}
+
+Suggested Unicode Emoji Characters (compatible with Emoji version 15.4):`,
 });
 
 const suggestEmojisFlow = ai.defineFlow(
