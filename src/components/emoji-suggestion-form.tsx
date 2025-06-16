@@ -20,7 +20,6 @@ import { Loader2, Send } from "lucide-react";
 
 import { suggestEmojis, type SuggestEmojisInput, type SuggestEmojisOutput } from "@/ai/flows/suggest-emojis";
 import { EmojiDisplay } from "./emoji-display";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const MAX_CHARS = 500;
 
@@ -71,6 +70,18 @@ export function EmojiSuggestionForm() {
     }
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const isMac = typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    const modifierKeyPressed = isMac ? event.metaKey : event.ctrlKey;
+
+    if (event.key === 'Enter' && modifierKeyPressed) {
+      event.preventDefault();
+      if (!isLoading) {
+        form.handleSubmit(onSubmit)();
+      }
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Form {...form}>
@@ -86,12 +97,13 @@ export function EmojiSuggestionForm() {
                     placeholder="E.g., Happy birthday! or Let's celebrate..."
                     className="resize-none min-h-[100px] text-base border-input focus:border-primary focus:ring-primary shadow-sm"
                     {...field}
+                    onKeyDown={handleKeyDown}
                     aria-describedby="text-input-description text-input-char-count"
                   />
                 </FormControl>
                 <div className="flex justify-between items-center">
                   <p id="text-input-description" className="text-sm text-muted-foreground">
-                    Describe a feeling, event, or idea, and we'll suggest emojis.
+                    Describe a feeling, event, or idea, and we'll suggest emojis. (Use Cmd/Ctrl + Enter to submit)
                   </p>
                   <p id="text-input-char-count" className={`text-sm font-code ${currentCharCount > MAX_CHARS ? 'text-destructive' : 'text-muted-foreground'}`}>
                     {currentCharCount}/{MAX_CHARS}
