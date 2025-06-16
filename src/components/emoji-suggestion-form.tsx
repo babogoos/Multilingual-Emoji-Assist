@@ -30,7 +30,7 @@ const formSchema = z.object({
 const catExamples = [
   { lang: "EN", text: "Cat" },
   { lang: "中文", text: "貓咪" },
-  { lang: "日本語", text: "猫" },
+  { lang: "日本語", text: "ねこ" },
   { lang: "한국어", text: "고양이" },
   { lang: "Bahasa Indonesia", text: "Kucing" },
   { lang: "Español", text: "Gato" },
