@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-import { AlertCircle, Copy, Info, Loader2, ClipboardList } from "lucide-react";
+import { AlertCircle, Copy, Info, Loader2, ClipboardList, Share2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface EmojiDisplayProps {
@@ -14,9 +14,10 @@ interface EmojiDisplayProps {
   isLoading: boolean;
   error: string | null;
   hasSearched: boolean;
+  inputText: string;
 }
 
-export function EmojiDisplay({ emojis, isLoading, error, hasSearched }: EmojiDisplayProps) {
+export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText }: EmojiDisplayProps) {
   const { toast } = useToast();
 
   const handleCopyEmoji = async (emoji: string) => {
@@ -62,10 +63,46 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched }: EmojiDis
     }
   };
 
+  const handleTestYourFriend = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Emoji Challenge!',
+          text: inputText,
+        });
+        toast({
+          title: "Shared! 📢",
+          description: "The text has been shared.",
+          duration: 3000,
+        });
+      } catch (err) {
+        // Silently ignore AbortError which occurs if the user cancels the share sheet
+        if (err instanceof Error && err.name === 'AbortError') {
+          console.log('Share dialog dismissed by user.');
+          return;
+        }
+        toast({
+          variant: "destructive",
+          title: "Share Failed 😥",
+          description: "Could not share the text.",
+          duration: 3000,
+        });
+      }
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Not Supported 🙁",
+        description: "Web Share API is not supported in your browser.",
+        duration: 3000,
+      });
+    }
+  };
+
+
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 p-4">
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-1 p-4">
           {Array.from({ length: 12 }).map((_, i) => (
             <Skeleton key={i} className="h-12 w-12 rounded-md" />
           ))}
@@ -104,7 +141,7 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched }: EmojiDis
 
     return (
       <ScrollArea className="h-64 p-1">
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 p-3">
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-1 p-3">
           {emojis.map((emoji, index) => (
             <Button
               key={index}
@@ -127,16 +164,26 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched }: EmojiDis
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-2xl font-headline text-primary">Suggested Emojis</CardTitle>
         {hasSearched && !isLoading && !error && emojis.length > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopyAllEmojis}
-            aria-label="Copy all suggested emojis"
-            className="ml-auto"
-          >
-            <ClipboardList className="mr-2 h-4 w-4" />
-            Copy All
-          </Button>
+          <div className="flex items-center gap-2 ml-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopyAllEmojis}
+              aria-label="Copy all suggested emojis"
+            >
+              <ClipboardList className="mr-2 h-4 w-4" />
+              Copy All
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleTestYourFriend}
+              aria-label="Test your friend with this text"
+            >
+              <Share2 className="mr-2 h-4 w-4" />
+              Test Your Friend
+            </Button>
+          </div>
         )}
       </CardHeader>
       <CardContent className="min-h-[200px] flex flex-col justify-center">

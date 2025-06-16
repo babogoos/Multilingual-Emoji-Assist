@@ -33,10 +33,10 @@ const catExamples = [
   { lang: "日本語", text: "ねこ" },
   { lang: "한국어", text: "고양이" },
   { lang: "Bahasa Indonesia", text: "Kucing" },
-  { lang: "Español", text: "Gato" },
+  { lang: "العربية", text: "قطة" },
   { lang: "Italiano", text: "Gatto" },
   { lang: "Français", text: "Chat" },
-  { lang: "العربية", text: "قطة" },
+  { lang: "Español", text: "Gato" },
   { lang: "Монгол", text: "Муур" },
   { lang: "Русский", text: "Кошка" },
 ];
@@ -115,7 +115,7 @@ export function EmojiSuggestionForm() {
                 <FormControl>
                   <Textarea
                     placeholder="E.g., Happy birthday! or Let's celebrate..."
-                    className="resize-none min-h-[100px] text-base border-input focus:border-primary focus:ring-primary shadow-sm"
+                    className="resize-none min-h-[100px] text-base border-input focus:border-primary focus:ring-primary shadow-sm tabular-nums"
                     {...field}
                     onKeyDown={handleKeyDown}
                     aria-describedby="text-input-description text-input-char-count"
@@ -129,10 +129,9 @@ export function EmojiSuggestionForm() {
                     {currentCharCount}/{MAX_CHARS}
                   </p>
                 </div>
-
-                {currentCharCount === 0 && !isLoading && (
-                  <div className="pb-2 space-y-2">
-                    <p className="text-xs text-muted-foreground">
+                 {currentCharCount === 0 && !isLoading && (
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground ">
                       Or try an example:
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -170,7 +169,7 @@ export function EmojiSuggestionForm() {
           </Button>
         </form>
       </Form>
-      <EmojiDisplay emojis={suggestedEmojis} isLoading={isLoading} error={error} hasSearched={hasSearched} />
+      <EmojiDisplay emojis={suggestedEmojis} isLoading={isLoading} error={error} hasSearched={hasSearched} inputText={textValue} />
     </div>
   );
 }
