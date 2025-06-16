@@ -31,7 +31,7 @@ export default function Home() {
         </header>
         <EmojiSuggestionForm />
         <footer className="text-center text-sm text-muted-foreground pt-8">
-          <p>&copy; {new Date().getFullYear()} Emoji Assist. Powered by AI.</p>
+          <p>&copy; {new Date().getFullYear()} Emoji Assist. Powered by Gemini 1.5 Flash & Firebase Studio.</p>
         </footer>
       </div>
     </main>
