@@ -32,6 +32,15 @@ const suggestEmojisPrompt = ai.definePrompt({
 
 Analyze the user's text carefully, considering its meaning, sentiment, and overall context.
 The suggested emojis MUST be compatible with Emoji version 15.4 as defined by the Unicode Consortium.
+For instance, Emoji 15.4 includes characters like:
+- 🙂‍↔️ (Head Shaking Horizontally)
+- 🙂‍↕️ (Head Shaking Vertically)
+- 🐦‍🔥 (Phoenix)
+- 🍋‍🟩 (Lime)
+- 🍄‍🟫 (Brown Mushroom)
+- ⛓️‍💥 (Broken Chain)
+(Remember, your output should only be the Unicode characters, not the names or descriptions.)
+
 The output MUST be a list of strings, where each string is a single, valid Unicode emoji character.
 
 Examples of valid output:
