@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from "react";
@@ -64,19 +63,20 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
   };
 
   const handleTestYourFriend = async () => {
+    if (emojis.length === 0) return;
+    const emojisToShare = emojis.join(" ");
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Emoji Challenge!',
-          text: inputText,
+          title: 'Emoji Challenge - Guess the Emojis!',
+          text: emojisToShare,
         });
         toast({
-          title: "Shared! 📢",
-          description: "The text has been shared.",
+          title: "Emojis Shared! 📢",
+          description: "The suggested emojis have been shared.",
           duration: 3000,
         });
       } catch (err) {
-        // Silently ignore AbortError which occurs if the user cancels the share sheet
         if (err instanceof Error && err.name === 'AbortError') {
           console.log('Share dialog dismissed by user.');
           return;
@@ -84,7 +84,7 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
         toast({
           variant: "destructive",
           title: "Share Failed 😥",
-          description: "Could not share the text.",
+          description: "Could not share the emojis.",
           duration: 3000,
         });
       }
@@ -161,16 +161,16 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
 
   return (
     <Card className="shadow-lg">
-      <CardHeader className="flex flex-row items-start justify-between"> {/* Changed items-center to items-start for better alignment with vertical buttons */}
+      <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <CardTitle className="text-2xl font-headline text-primary">Suggested Emojis</CardTitle>
         {hasSearched && !isLoading && !error && emojis.length > 0 && (
-          <div className="flex flex-col items-end gap-2 ml-auto"> {/* Changed to flex-col and items-end */}
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <Button
               variant="outline"
               size="sm"
               onClick={handleCopyAllEmojis}
               aria-label="Copy all suggested emojis"
-              className="w-full" // Make buttons full width of their container
+              className="w-full"
             >
               <ClipboardList className="mr-2 h-4 w-4" />
               Copy All
@@ -179,8 +179,8 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
               variant="outline"
               size="sm"
               onClick={handleTestYourFriend}
-              aria-label="Test your friend with this text"
-              className="w-full" // Make buttons full width of their container
+              aria-label="Test your friend with these emojis"
+              className="w-full"
             >
               <Share2 className="mr-2 h-4 w-4" />
               Test Your Friend
