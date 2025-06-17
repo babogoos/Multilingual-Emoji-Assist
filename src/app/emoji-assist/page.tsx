@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 
 export default function Home() {
   const [description, setDescription] = useState("Enter some text and let AI suggest the perfect emoji for you! Supports multiple languages.");
-  const [footerText, setFooterText] = useState("© 2024 Emoji Assist. Powered by Gemini 1.5 Flash & Firebase Studio.");
+  const [footerText, setFooterText] = useState("© 2024 Emoji Assist. Powered by Gemini 2.5 Flash & Firebase Studio.");
 
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function Home() {
       }
     }
     // Update year dynamically
-    setFooterText(`© ${new Date().getFullYear()} Emoji Assist. Powered by Gemini 1.5 Flash & Firebase Studio.`);
+    setFooterText(`© ${new Date().getFullYear()} Emoji Assist. Powered by Gemini 2.5 Flash & Firebase Studio.`);
   }, []);
 
   return (
