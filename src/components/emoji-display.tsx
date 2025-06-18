@@ -1,8 +1,9 @@
+
 "use client";
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { AlertCircle, Copy, Info, Loader2, ClipboardList, Share2 } from "lucide-react";
@@ -62,7 +63,7 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
     }
   };
 
-  const handleTestYourFriend = async () => {
+  const handleEmojiCharades = async () => {
     if (emojis.length === 0) return;
     const emojisToShare = emojis.join(" ");
     if (navigator.share) {
@@ -73,7 +74,7 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
         });
         toast({
           title: "Emojis Shared! 📢",
-          description: "The suggested emojis have been shared.",
+          description: "The charade has been shared.",
           duration: 3000,
         });
       } catch (err) {
@@ -84,7 +85,7 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
         toast({
           variant: "destructive",
           title: "Share Failed 😥",
-          description: "Could not share the emojis.",
+          description: "Could not share the emoji charade.",
           duration: 3000,
         });
       }
@@ -140,7 +141,7 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
     }
 
     return (
-      <ScrollArea className="h-64 p-1">
+      <ScrollArea className="max-h-64 p-1">
         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-1 p-3">
           {emojis.map((emoji, index) => (
             <Button
@@ -161,10 +162,15 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
 
   return (
     <Card className="shadow-lg">
-      <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <CardHeader>
         <CardTitle className="text-2xl font-headline text-primary">Suggested Emojis</CardTitle>
-        {hasSearched && !isLoading && !error && emojis.length > 0 && (
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+      </CardHeader>
+      <CardContent className="min-h-[200px] flex flex-col justify-center">
+        {renderContent()}
+      </CardContent>
+      {hasSearched && !isLoading && !error && emojis.length > 0 && (
+        <CardFooter>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:ml-auto">
             <Button
               variant="outline"
               size="sm"
@@ -178,19 +184,16 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
             <Button
               variant="outline"
               size="sm"
-              onClick={handleTestYourFriend}
-              aria-label="Test your friend with these emojis"
+              onClick={handleEmojiCharades}
+              aria-label="Share emoji charades"
               className="w-full"
             >
               <Share2 className="mr-2 h-4 w-4" />
-              Test Your Friend
+              Emoji Charades
             </Button>
           </div>
-        )}
-      </CardHeader>
-      <CardContent className="min-h-[200px] flex flex-col justify-center">
-        {renderContent()}
-      </CardContent>
+        </CardFooter>
+      )}
     </Card>
   );
 }
