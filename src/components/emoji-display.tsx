@@ -90,12 +90,22 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
         });
       }
     } else {
-      toast({
-        variant: "destructive",
-        title: "Not Supported 🙁",
-        description: "Web Share API is not supported in your browser.",
-        duration: 3000,
-      });
+      // Fallback to copying to clipboard for desktop/unsupported browsers
+      try {
+        await navigator.clipboard.writeText(emojisToShare);
+        toast({
+          title: "Emoji Charade Copied! 📋",
+          description: "Paste it to challenge your friends.",
+          duration: 3000,
+        });
+      } catch (err) {
+        toast({
+          variant: "destructive",
+          title: "Copy Failed 😥",
+          description: "Could not copy charade to clipboard.",
+          duration: 3000,
+        });
+      }
     }
   };
 
@@ -176,7 +186,7 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
               size="sm"
               onClick={handleCopyAllEmojis}
               aria-label="Copy all suggested emojis"
-              className="w-full"
+              className="w-full sm:w-auto"
             >
               <ClipboardList className="mr-2 h-4 w-4" />
               Copy All
@@ -186,7 +196,7 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
               size="sm"
               onClick={handleEmojiCharades}
               aria-label="Share emoji charades"
-              className="w-full"
+              className="w-full sm:w-auto"
             >
               <Share2 className="mr-2 h-4 w-4" />
               Emoji Charades
