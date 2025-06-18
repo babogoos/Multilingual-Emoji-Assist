@@ -66,6 +66,8 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
   const handleEmojiCharades = async () => {
     if (emojis.length === 0) return;
     const emojisToShare = emojis.join(" ");
+    let sharedViaApi = false;
+
     if (navigator.share) {
       try {
         await navigator.share({
@@ -77,20 +79,20 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
           description: "The charade has been shared.",
           duration: 3000,
         });
+        sharedViaApi = true; // Mark that share API was successful
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {
           console.log('Share dialog dismissed by user.');
+          // User cancelled the share dialog. We won't proceed to clipboard automatically.
           return;
         }
-        toast({
-          variant: "destructive",
-          title: "Share Failed 😥",
-          description: "Could not share the emoji charade.",
-          duration: 3000,
-        });
+        // For other errors with navigator.share, we log it and will attempt clipboard fallback.
+        console.warn("Web Share API attempt failed (not AbortError):", err);
       }
-    } else {
-      // Fallback to copying to clipboard for desktop/unsupported browsers
+    }
+
+    // If sharing via API was not attempted or failed (and wasn't an AbortError)
+    if (!sharedViaApi) {
       try {
         await navigator.clipboard.writeText(emojisToShare);
         toast({
@@ -98,13 +100,23 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
           description: "Paste it to challenge your friends.",
           duration: 3000,
         });
-      } catch (err) {
-        toast({
-          variant: "destructive",
-          title: "Copy Failed 😥",
-          description: "Could not copy charade to clipboard.",
-          duration: 3000,
-        });
+      } catch (copyErr) {
+        // Determine the correct error message based on whether Web Share API was available
+        if (navigator.share) { // Implies Web Share was attempted and failed, then copy also failed
+          toast({
+            variant: "destructive",
+            title: "Share & Copy Failed 😥",
+            description: "Could not share or copy the charade.",
+            duration: 3000,
+          });
+        } else { // Implies Web Share was not available, and copy failed
+          toast({
+            variant: "destructive",
+            title: "Copy Failed 😥",
+            description: "Could not copy charade to clipboard.",
+            duration: 3000,
+          });
+        }
       }
     }
   };
