@@ -165,7 +165,7 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
       <CardHeader>
         <CardTitle className="text-2xl font-headline text-primary">Suggested Emojis</CardTitle>
       </CardHeader>
-      <CardContent className="min-h-[200px] flex flex-col justify-center">
+      <CardContent className="flex flex-col justify-center">
         {renderContent()}
       </CardContent>
       {hasSearched && !isLoading && !error && emojis.length > 0 && (
