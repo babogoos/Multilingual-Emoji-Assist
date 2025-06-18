@@ -35,7 +35,7 @@ const catExamples = [
   { lang: "Bahasa Indonesia", text: "Kucing" },
   { lang: "العربية", text: "قطة" },
   { lang: "Italiano", text: "Gatto" },
-  { lang: "Français", text: "Chat" },
+  { lang: "Français", text: "minou" },
   { lang: "Español", text: "Gato" },
   { lang: "Монгол", text: "Муур" },
   { lang: "Русский", text: "Кошка" },
