@@ -64,52 +64,49 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
   };
 
   const handleEmojiCharades = async () => {
-    if (emojis.length === 0) return;
-    const emojisToShare = emojis.join(" ");
+    if (emojis.length === 0 || !inputText) return;
+
+    const charadeText = `${emojis.join(" ")}\n\n(Hint: The original text has ${inputText.length} character${inputText.length === 1 ? '' : 's'})`;
     let sharedViaApi = false;
 
     if (navigator.share) {
       try {
         await navigator.share({
           title: 'Emoji Challenge - Guess the Emojis!',
-          text: emojisToShare,
+          text: charadeText,
         });
         toast({
           title: "Emojis Shared! 📢",
-          description: "The charade has been shared.",
+          description: "The charade (with a hint) has been shared.",
           duration: 3000,
         });
-        sharedViaApi = true; // Mark that share API was successful
+        sharedViaApi = true;
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {
           console.log('Share dialog dismissed by user.');
-          // User cancelled the share dialog. We won't proceed to clipboard automatically.
           return;
         }
-        // For other errors with navigator.share, we log it and will attempt clipboard fallback.
-        console.warn("Web Share API attempt failed (not AbortError):", err);
+        console.warn("Web Share API attempt failed:", err);
       }
     }
 
-    // If sharing via API was not attempted or failed (and wasn't an AbortError)
     if (!sharedViaApi) {
       try {
-        await navigator.clipboard.writeText(emojisToShare);
+        await navigator.clipboard.writeText(charadeText);
         toast({
           title: "Emoji Charade Copied! 📋",
-          description: "Paste it to challenge your friends.",
+          description: "Includes a character count hint. Paste it to challenge your friends.",
           duration: 3000,
         });
       } catch (copyErr) {
-        // Determine the correct error message based on whether Web Share API was available
-        if (navigator.share) { // Implies Web Share was attempted and failed, then copy also failed
+        if (navigator.share) {
           toast({
             variant: "destructive",
             title: "Share & Copy Failed 😥",
             description: "Could not share or copy the charade.",
             duration: 3000,
           });
-        } else { // Implies Web Share was not available, and copy failed
+        } else {
           toast({
             variant: "destructive",
             title: "Copy Failed 😥",
@@ -207,7 +204,7 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
               variant="outline"
               size="sm"
               onClick={handleEmojiCharades}
-              aria-label="Share emoji charades"
+              aria-label="Share emoji charades with character count hint"
               className="w-full sm:w-auto"
             >
               <Share2 className="mr-2 h-4 w-4" />
