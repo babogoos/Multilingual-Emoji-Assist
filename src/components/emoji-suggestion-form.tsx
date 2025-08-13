@@ -109,11 +109,19 @@ export function EmojiSuggestionForm() {
 
       recognition.onerror = (event: any) => {
         console.error("Speech recognition error", event.error);
-        toast({
-          variant: "destructive",
-          title: "Voice Error",
-          description: `An error occurred during speech recognition: ${event.error}`,
-        });
+        if (event.error === 'no-speech' || event.error === 'network') {
+            toast({
+              variant: "default",
+              title: "Voice Input Paused",
+              description: "Couldn't hear anything. Please try speaking again.",
+            });
+        } else {
+            toast({
+              variant: "destructive",
+              title: "Voice Error",
+              description: `An error occurred during speech recognition: ${event.error}`,
+            });
+        }
         setIsListening(false);
       };
 
