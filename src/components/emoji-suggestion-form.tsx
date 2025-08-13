@@ -27,18 +27,18 @@ const formSchema = z.object({
   text: z.string().min(1, { message: "Please enter some text." }).max(MAX_CHARS, { message: `Text cannot exceed ${MAX_CHARS} characters.` }),
 });
 
-const animalExamples = [
-  { lang: "EN", text: "Giraffe" },
-  { lang: "中文", text: "長頸鹿" },
-  { lang: "日本語", text: "キリン" },
-  { lang: "한국어", text: "기린" },
-  { lang: "Bahasa Indonesia", text: "Jerapah" },
-  { lang: "العربية", text: "زرافة" },
-  { lang: "Italiano", text: "Giraffa" },
-  { lang: "Français", text: "Girafe" },
-  { lang: "Español", text: "Jirafa" },
-  { lang: "Монгол", text: "Анааш" },
-  { lang: "Русский", text: "Жираф" },
+const catExamples = [
+  { lang: "EN", text: "Cat" },
+  { lang: "中文", text: "貓" },
+  { lang: "日本語", text: "猫" },
+  { lang: "한국어", text: "고양이" },
+  { lang: "Bahasa Indonesia", text: "Kucing" },
+  { lang: "العربية", text: "قط" },
+  { lang: "Italiano", text: "Gatto" },
+  { lang: "Français", text: "Chat" },
+  { lang: "Español", text: "Gato" },
+  { lang: "Монгол", text: "Муур" },
+  { lang: "Русский", text: "Кот" },
 ];
 
 
@@ -199,7 +199,7 @@ export function EmojiSuggestionForm() {
                       Or try an example:
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {animalExamples.map((example) => (
+                      {catExamples.map((example) => (
                         <Button
                           key={example.lang}
                           type="button"
