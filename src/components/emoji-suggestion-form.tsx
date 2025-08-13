@@ -92,7 +92,9 @@ export function EmojiSuggestionForm() {
 
   React.useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
+    const isSafari = typeof navigator !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+    if (SpeechRecognition && !isSafari) {
       setIsSpeechRecognitionSupported(true);
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
