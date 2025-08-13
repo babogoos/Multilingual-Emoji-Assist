@@ -35,7 +35,7 @@ const catExamples = [
   { lang: "Bahasa Indonesia", text: "Kucing" },
   { lang: "العربية", text: "هريرة" },
   { lang: "Italiano", text: "micetto" },
-  { lang: "Français", text: "minou" },
+  { lang: "Français", text: "Minou" },
   { lang: "Español", text: "gatito" },
   { lang: "Монгол", text: "Муур" },
   { lang: "Русский", text: "котенок" },
@@ -55,6 +55,40 @@ export function EmojiSuggestionForm() {
 
   const recognitionRef = React.useRef<any>(null);
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      text: "",
+    },
+  });
+
+  const onSubmit = React.useCallback(async (values: z.infer<typeof formSchema>) => {
+    if (isLoading) return;
+    setIsLoading(true);
+    setError(null);
+    setHasSearched(true);
+    try {
+      const input: SuggestEmojisInput = { text: values.text };
+      const result: SuggestEmojisOutput = await suggestEmojis(input);
+      setSuggestedEmojis(result.emojis || []);
+      setDetectedLanguage(result.language);
+      if (!result.emojis || result.emojis.length === 0) {
+         // This case is handled by EmojiDisplay based on emojis.length and hasSearched
+      }
+    } catch (e) {
+      console.error("Error suggesting emojis:", e);
+      const errorMessage = e instanceof Error ? e.message : "An unknown error occurred.";
+      setError(`Failed to get suggestions. ${errorMessage}`);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: `Could not fetch emoji suggestions. ${errorMessage}`,
+      });
+      setSuggestedEmojis([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isLoading, toast]);
 
   React.useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -86,49 +120,16 @@ export function EmojiSuggestionForm() {
       recognition.onresult = (event: any) => {
         const transcript = event.results[0][0].transcript;
         form.setValue("text", transcript, { shouldValidate: true });
+        onSubmit({ text: transcript });
       };
       
       recognitionRef.current = recognition;
     }
-  }, [toast]);
+  }, [toast, form, onSubmit]);
 
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      text: "",
-    },
-  });
 
   const textValue = form.watch("text");
   const currentCharCount = textValue?.length || 0;
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
-    setError(null);
-    setHasSearched(true);
-    try {
-      const input: SuggestEmojisInput = { text: values.text };
-      const result: SuggestEmojisOutput = await suggestEmojis(input);
-      setSuggestedEmojis(result.emojis || []);
-      setDetectedLanguage(result.language);
-      if (!result.emojis || result.emojis.length === 0) {
-         // This case is handled by EmojiDisplay based on emojis.length and hasSearched
-      }
-    } catch (e) {
-      console.error("Error suggesting emojis:", e);
-      const errorMessage = e instanceof Error ? e.message : "An unknown error occurred.";
-      setError(`Failed to get suggestions. ${errorMessage}`);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: `Could not fetch emoji suggestions. ${errorMessage}`,
-      });
-      setSuggestedEmojis([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const isMac = typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
@@ -263,5 +264,3 @@ export function EmojiSuggestionForm() {
     </div>
   );
 }
-
-    
