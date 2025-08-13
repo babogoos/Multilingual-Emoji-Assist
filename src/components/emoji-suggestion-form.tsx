@@ -109,15 +109,9 @@ export function EmojiSuggestionForm() {
 
       recognition.onerror = (event: any) => {
         console.error("Speech recognition error:", event.error);
-        if (event.error === 'no-speech') {
-          // This error is common on desktop if the user doesn't speak immediately.
+        if (event.error === 'no-speech' || event.error === 'network') {
+          // These errors are common if the user doesn't speak immediately or due to transient network issues.
           // We'll just let the mic icon reset without a disruptive toast.
-        } else if (event.error === 'network') {
-            toast({
-              variant: "default",
-              title: "Voice Input Paused",
-              description: "Couldn't hear anything due to a network issue. Please try again.",
-            });
         } else {
             toast({
               variant: "destructive",
