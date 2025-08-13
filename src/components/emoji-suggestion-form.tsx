@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Send } from "lucide-react";
+import { Loader2, Send, Mic, MicOff } from "lucide-react";
 
 import { suggestEmojis, type SuggestEmojisInput, type SuggestEmojisOutput } from "@/ai/flows/suggest-emojis";
 import { EmojiDisplay } from "./emoji-display";
@@ -27,26 +27,71 @@ const formSchema = z.object({
   text: z.string().min(1, { message: "Please enter some text." }).max(MAX_CHARS, { message: `Text cannot exceed ${MAX_CHARS} characters.` }),
 });
 
-const catExamples = [
-  { lang: "EN", text: "Cat" },
-  { lang: "中文", text: "貓咪" },
-  { lang: "日本語", text: "ねこ" },
-  { lang: "한국어", text: "고양이" },
-  { lang: "Bahasa Indonesia", text: "Kucing" },
-  { lang: "العربية", text: "قطة" },
-  { lang: "Italiano", text: "Gatto" },
-  { lang: "Français", text: "Minou" },
-  { lang: "Español", text: "Gato" },
-  { lang: "Монгол", text: "Муур" },
-  { lang: "Русский", text: "Кошка" },
+const animalExamples = [
+  { lang: "EN", text: "Giraffe" },
+  { lang: "中文", text: "長頸鹿" },
+  { lang: "日本語", text: "キリン" },
+  { lang: "한국어", text: "기린" },
+  { lang: "Bahasa Indonesia", text: "Jerapah" },
+  { lang: "العربية", text: "زرافة" },
+  { lang: "Italiano", text: "Giraffa" },
+  { lang: "Français", text: "Girafe" },
+  { lang: "Español", text: "Jirafa" },
+  { lang: "Монгол", text: "Анааш" },
+  { lang: "Русский", text: "Жираф" },
 ];
+
 
 export function EmojiSuggestionForm() {
   const [suggestedEmojis, setSuggestedEmojis] = React.useState<string[]>([]);
+  const [detectedLanguage, setDetectedLanguage] = React.useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [hasSearched, setHasSearched] = React.useState(false);
+  const [isListening, setIsListening] = React.useState(false);
+  const [isSpeechRecognitionSupported, setIsSpeechRecognitionSupported] = React.useState(false);
+
   const { toast } = useToast();
+
+  const recognitionRef = React.useRef<any>(null);
+
+
+  React.useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      setIsSpeechRecognitionSupported(true);
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = typeof navigator !== 'undefined' ? navigator.language : 'en-US';
+
+      recognition.onstart = () => {
+        setIsListening(true);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error("Speech recognition error", event.error);
+        toast({
+          variant: "destructive",
+          title: "Voice Error",
+          description: `An error occurred during speech recognition: ${event.error}`,
+        });
+        setIsListening(false);
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        form.setValue("text", transcript, { shouldValidate: true });
+      };
+      
+      recognitionRef.current = recognition;
+    }
+  }, [toast]);
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,6 +111,7 @@ export function EmojiSuggestionForm() {
       const input: SuggestEmojisInput = { text: values.text };
       const result: SuggestEmojisOutput = await suggestEmojis(input);
       setSuggestedEmojis(result.emojis || []);
+      setDetectedLanguage(result.language);
       if (!result.emojis || result.emojis.length === 0) {
          // This case is handled by EmojiDisplay based on emojis.length and hasSearched
       }
@@ -101,6 +147,24 @@ export function EmojiSuggestionForm() {
     form.setValue("text", exampleText, { shouldValidate: true });
     await onSubmit({ text: exampleText });
   };
+  
+  const handleListen = () => {
+    if (!isSpeechRecognitionSupported) {
+      toast({
+        variant: "destructive",
+        title: "Unsupported",
+        description: "Your browser does not support speech recognition.",
+      });
+      return;
+    }
+    if (isListening) {
+      recognitionRef.current?.stop();
+    } else {
+      form.setValue("text", ""); // Clear the textarea before listening
+      recognitionRef.current?.start();
+    }
+  };
+
 
   return (
     <div className="space-y-6">
@@ -123,7 +187,7 @@ export function EmojiSuggestionForm() {
                 </FormControl>
                 <div className="flex justify-between items-center">
                   <p id="text-input-description" className="text-sm text-muted-foreground">
-                    Describe a feeling, event, or idea, and we'll suggest emojis. (Use Cmd/Ctrl + Enter to submit)
+                    Describe a feeling, event, or idea. (Use Cmd/Ctrl + Enter to submit)
                   </p>
                   <p id="text-input-char-count" className={`text-sm font-code ${currentCharCount > MAX_CHARS ? 'text-destructive' : 'text-muted-foreground'}`}>
                     {currentCharCount}/{MAX_CHARS}
@@ -135,7 +199,7 @@ export function EmojiSuggestionForm() {
                       Or try an example:
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {catExamples.map((example) => (
+                      {animalExamples.map((example) => (
                         <Button
                           key={example.lang}
                           type="button"
@@ -155,21 +219,49 @@ export function EmojiSuggestionForm() {
             )}
           />
 
-          <Button type="submit" disabled={isLoading} className="w-full py-3 text-lg font-medium">
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Suggesting...
-              </>
-            ) : (
-              <>
-                Suggest Emojis <Send className="ml-2 h-5 w-5" />
-              </>
+          <div className="flex items-center gap-2">
+            <Button type="submit" disabled={isLoading || isListening} className="w-full py-3 text-lg font-medium">
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Suggesting...
+                </>
+              ) : (
+                <>
+                  Suggest Emojis <Send className="ml-2 h-5 w-5" />
+                </>
+              )}
+            </Button>
+            {isSpeechRecognitionSupported && (
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="rounded-full w-11 h-11 flex-shrink-0"
+                onClick={handleListen}
+                disabled={isLoading}
+                aria-label={isListening ? "Stop listening" : "Start listening"}
+              >
+                {isListening ? (
+                  <MicOff className="h-5 w-5 text-destructive animate-pulse" />
+                ) : (
+                  <Mic className="h-5 w-5" />
+                )}
+              </Button>
             )}
-          </Button>
+          </div>
         </form>
       </Form>
-      <EmojiDisplay emojis={suggestedEmojis} isLoading={isLoading} error={error} hasSearched={hasSearched} inputText={textValue} />
+      <EmojiDisplay 
+        emojis={suggestedEmojis} 
+        isLoading={isLoading} 
+        error={error} 
+        hasSearched={hasSearched} 
+        inputText={textValue}
+        language={detectedLanguage}
+      />
     </div>
   );
 }
+
+    

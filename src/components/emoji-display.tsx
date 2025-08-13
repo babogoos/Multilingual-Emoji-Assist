@@ -15,9 +15,10 @@ interface EmojiDisplayProps {
   error: string | null;
   hasSearched: boolean;
   inputText: string;
+  language?: string;
 }
 
-export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText }: EmojiDisplayProps) {
+export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText, language }: EmojiDisplayProps) {
   const { toast } = useToast();
 
   const handleCopyEmoji = async (emoji: string) => {
@@ -65,8 +66,9 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
 
   const handleEmojiCharades = async () => {
     if (emojis.length === 0 || !inputText) return;
-
-    const charadeText = `${emojis.join(" ")}\n\n(Hint: The original text has ${inputText.length} character${inputText.length === 1 ? '' : 's'})`;
+    
+    const languageHint = language ? ` in ${language}` : '';
+    const charadeText = `${emojis.join(" ")}\n\n(Hint: The original text has ${inputText.length} character${inputText.length === 1 ? '' : 's'}${languageHint})`;
     let sharedViaApi = false;
 
     if (navigator.share) {
@@ -204,7 +206,7 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
               variant="outline"
               size="sm"
               onClick={handleEmojiCharades}
-              aria-label="Share emoji charades with character count hint"
+              aria-label="Share emoji charades with a hint"
               className="w-full sm:w-auto"
             >
               <Share2 className="mr-2 h-4 w-4" />
@@ -216,3 +218,6 @@ export function EmojiDisplay({ emojis, isLoading, error, hasSearched, inputText 
     </Card>
   );
 }
+
+
+    
