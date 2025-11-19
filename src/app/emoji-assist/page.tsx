@@ -37,7 +37,7 @@ export default function Home() {
         <footer className="text-center text-sm text-muted-foreground pt-8 tabular-nums">
           <p>{footerText}</p>
           <p>
-            Author by <a href="https://www.linkedin.com/in/dionchangtw/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Dion Chang</a>
+            Developed by <a href="https://www.linkedin.com/in/dionchangtw/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Dion Chang</a>
           </p>
         </footer>
       </div>
