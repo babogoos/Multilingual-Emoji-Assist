@@ -1,6 +1,6 @@
 # Emoji Assist
 
-Emoji Assist is a web application that uses AI to suggest the perfect emoji for your text. It supports multiple languages and is powered by Gemini 1.5 Flash and Firebase.
+Emoji Assist is a web application that uses AI to suggest the perfect emoji for your text. It supports multiple languages and is powered by Gemini 2.5 Flash and Firebase.
 
 ## Features
 
