@@ -36,10 +36,10 @@ export default function Home() {
         <EmojiSuggestionForm />
         <footer className="text-center text-sm text-muted-foreground pt-8 tabular-nums space-y-1">
           <p>{footerText}</p>
+          <p>For any questions or feedback, feel free to <a href="https://www.linkedin.com/in/dionchangtw/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">reach out</a>.</p>
           <p>
             Developed by <a href="https://www.linkedin.com/in/dionchangtw/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Dion Chang</a>
           </p>
-          <p>For any questions or feedback, feel free to <a href="https://www.linkedin.com/in/dionchangtw/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">reach out</a>.</p>
         </footer>
       </div>
     </main>
