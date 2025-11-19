@@ -12,7 +12,7 @@ Emoji Assist is a web application that uses AI to suggest the perfect emoji for 
 
 *   **Frontend:** [Next.js](https://nextjs.org/), [React](https://reactjs.org/), [Tailwind CSS](https://tailwindcss.com/)
 *   **Backend:** [Genkit](https://firebase.google.com/docs/genkit)
-*   **AI Model:** [Gemini 1.5 Flash](https://deepmind.google/technologies/gemini/flash/)
+*   **AI Model:** [Gemini 2.5 Flash](https://deepmind.google/technologies/gemini/flash/)
 *   **Hosting:** [Firebase Hosting](https://firebase.google.com/docs/hosting)
 
 ## Getting Started
